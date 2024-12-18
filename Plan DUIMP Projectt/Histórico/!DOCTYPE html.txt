@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulário de Atributos NCM</title>
+    <style>
+        #save-button {
+            position: fixed; /* Fixa o botão na tela */
+            bottom: 20px; /* Distância da parte inferior da janela */
+            right: 20px; /* Distância da lateral direita da janela */
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 50px; /* Torna as bordas arredondadas */
+            font-size: 16px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Adiciona uma leve sombra */
+            z-index: 1000; /* Garante que esteja acima de outros elementos */
+            width: 300px;
+            transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out; /* Efeito de fade-in e fade-out */
+            opacity: 0; /* Inicialmente invisível */
+            visibility: hidden; /* Inicialmente fora do fluxo de layout */
+        }
+    
+        #save-button:hover {
+            background-color: #0056b3; /* Cor de fundo ao passar o mouse */
+            transform: scale(1.1); /* Aumenta o tamanho ligeiramente ao passar o mouse */
+        }
+    
+        #save-button:active {
+            background-color: #004085; /* Cor ao clicar */
+            transform: scale(1.05); /* Reduz o tamanho ligeiramente ao clicar */
+        }
+        #atributos-container{
+            margin-bottom: 75px;
+        }
+    </style>
+    
+    
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f5f5f5;
+        }
+    
+        h1, h2 {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+    
+        label {
+            font-weight: bold;
+            margin-top: 10px;
+            display: block;
+        }
+    
+        .required::after {
+            content: "*";
+            color: red;
+            margin-left: 5px;
+        }
+    
+        input, select, textarea, button {
+            width: calc(100% - 20px); /* Ajuste para que o campo caiba dentro da div */
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box; /* Garante que padding e border não ultrapassem o tamanho definido */
+        }
+    
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            padding: 10px 20px;
+            margin-top: 10px;
+        }
+    
+        button:hover {
+            background-color: #0056b3;
+        }
+    
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            /*gap: 20px;*/
+            padding: 20px;
+        }
+    
+        .section {
+            flex: 1 1 calc(50% - 40px); /* Ajusta largura da div para 50% do container menos espaçamento */
+            padding: 10px;
+            background-color: #ffffff;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin: 10px;
+        }
+    
+        .nested {
+            margin-left: 20px;
+            padding: 10px;
+            background-color: #e9ecef;
+            border-left: 3px solid #007bff;
+        }
+    
+        textarea {
+            resize: none; /* Remove redimensionamento para melhor controle de layout */
+        }
+    
+        /* Mobile responsiveness */
+        @media (max-width: 768px) {
+            .section {
+                flex: 1 1 100%;
+            }
+        }
+    </style>
+    <style>
+        /* Estilos gerais para as abas */
+        #tabs-container {
+            font-family: Arial, sans-serif;
+        }
+    
+        .tabs {
+            display: flex;
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            background-color: #f4f4f4;
+            border-bottom: 2px solid #ddd;
+        }
+    
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: 1px solid #ddd;
+            border-bottom: none;
+            background-color: #f9f9f9;
+            margin-right: 2px;
+        }
+    
+        .tab.active {
+            background-color: white;
+            font-weight: bold;
+            border-top: 2px solid #007bff;
+            border-right: 2px solid #ddd;
+            border-left: 2px solid #ddd;
+        }
+    
+        .tab-content {
+            display: none;
+            padding: 20px;
+            border: 1px solid #ddd;
+            background-color: white;
+        }
+    
+        .tab-content.active {
+            display: block;
+            height: 400px;
+        }
+    
+        /* Estilos para a tabela */
+        #uploaded-files-table {
+            margin-top: 20px;
+            width: 100%;
+            border-collapse: collapse;
+            font-family: Arial, sans-serif;
+        }
+    
+        #uploaded-files-table th,
+        #uploaded-files-table td {
+            border: 1px solid #ddd;
+            text-align: left;
+            padding: 8px;
+        }
+    
+        #uploaded-files-table th {
+            background-color: #f4f4f4;
+            font-weight: bold;
+        }
+    
+        #uploaded-files-table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+    
+        #uploaded-files-table tr:hover {
+            background-color: #f1f1f1;
+        }
+    
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+        }
+    
+        .action-buttons button {
+            padding: 5px 10px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+    
+        .action-buttons button:hover {
+            background-color: #0056b3;
+        }
+    
+        .delete-button {
+            background-color: #dc3545;
+        }
+    
+        .delete-button:hover {
+            background-color: #a71d2a;
+        }
+    </style>
+</head>
+
+<script>
+window.addEventListener("scroll", () => {
+    const saveButton = document.getElementById("save-button");
+    const scrollPosition = window.scrollY; // Posição do scroll atual
+    const pageHeight = document.documentElement.scrollHeight; // Altura total da página
+    const halfPageHeight = pageHeight / 2; // Metade da altura da página
+
+    // Verifica se o scroll ultrapassou a metade da página
+    if (scrollPosition >= (halfPageHeight)*0.3) {
+        saveButton.style.opacity = "1"; // Tornar visível
+        saveButton.style.visibility = "visible"; // Garantir que fique no fluxo
+    } else {
+        saveButton.style.opacity = "0"; // Tornar invisível
+        saveButton.style.visibility = "hidden"; // Remover do fluxo
+    }
+});
+
+
+    let pnData = [];
+
+async function carregarPNs() {
+    try {
+        const response = await fetch('/get_pn_options');
+        if (!response.ok) {
+            throw new Error('Erro ao carregar opções de PN');
+        }
+
+        const data = await response.json();
+        pnData = data; // Salva os dados no array global
+
+        const pnDatalist = document.getElementById('pn-options');
+        pnDatalist.innerHTML = ''; // Limpa o datalist antes de preenchê-lo
+
+        // Preenche o datalist com as opções do back-end
+        data.forEach(item => {
+            const option = document.createElement('option');
+            option.value = item.Produto; // Valor exibido no input
+            option.label = `NCM: ${item.NCM}`; // Informação adicional
+            pnDatalist.appendChild(option);
+        });
+    } catch (error) {
+        console.error('Erro ao carregar PNs:', error);
+        alert('Erro ao carregar as opções de PN. Verifique a conexão.');
+    }
+}
+
+document.addEventListener("DOMContentLoaded", carregarPNs);
+
+function atualizarCamposPN() {
+    const pnInput = document.getElementById('pn').value.trim(); // Valor selecionado no input
+    const matchedItem = pnData.find(item => item.Produto === pnInput); // Busca o PN correspondente
+
+    if (!matchedItem) {
+        console.warn("PN não encontrado:", pnInput);
+        limparCamposPN(); // Limpa os campos se o PN não for encontrado
+        return;
+    }
+
+    // Preenche os campos com os valores do PN correspondente
+    document.getElementById('ncm').value = matchedItem.NCM || '';
+    document.getElementById('codigo-fornecedor').value = matchedItem["Forn 1"] || '';
+    document.getElementById('pais-fornecedor').value = matchedItem["País"] || '';
+    document.getElementById('nome-fornecedor').value = matchedItem["Des Fornec 1"] || '';
+    document.getElementById('codigo-fornecedor-duimp').value = matchedItem["codigo"] || '';
+    
+    // Preenche o campo de descrição detalhada
+    const descricaoInput = document.getElementById('descricao');
+    descricaoInput.value = matchedItem["Descricao Sistema"] || ''; // Note a chave exata
+}
+
+function limparCamposPN() {
+    // Limpa os campos se o PN não for encontrado
+    document.getElementById('ncm').value = '';
+    document.getElementById('codigo-fornecedor').value = '';
+    document.getElementById('pais-fornecedor').value = '';
+    document.getElementById('nome-fornecedor').value = '';
+    document.getElementById('codigo-fornecedor-duimp').value = '';
+    document.getElementById('descricao').value = ''; // Limpa o campo de descrição detalhada
+}
+
+    document.addEventListener("DOMContentLoaded", () => {
+        carregarPNs(); // Carrega os PNs ao inicializar
+    });
+    
+// Funções de interação com os atributos
+async function buscarNCM() {
+        const ncm = document.getElementById("ncm").value.trim();
+
+        if (!ncm) {
+            alert("Por favor, insira um código NCM válido.");
+            return;
+        }
+
+        try {
+            const response = await fetch("/buscar_ncm", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ ncm })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                renderAtributos(data);
+            } else {
+                alert(data.error || "Erro ao buscar a NCM.");
+            }
+        } catch (error) {
+            console.error("Erro ao buscar a NCM:", error);
+            alert("Ocorreu um erro ao se comunicar com o servidor.");
+        }
+    }
+
+function renderAtributos(atributos, container) {
+    if (!container) {
+        container = document.getElementById("atributos-container");
+        if (!container) {
+            console.error("Contêiner 'atributos-container' não encontrado.");
+            return;
+        }
+        container.innerHTML = ""; // Limpa os atributos existentes
+    }
+
+    atributos.forEach(atributo => {
+        if (atributo.nomeApresentacao && atributo.formaPreenchimento) {
+            criarCampoAtributo(atributo, container);
+        } else {
+            console.warn(`Atributo ignorado: ${JSON.stringify(atributo)}`);
+        }
+    });
+}
+function criarCampoAtributo(atributo, container) {
+    if (!atributo || typeof atributo !== "object") {
+        console.error("Atributo inválido ou indefinido.");
+        return;
+    }
+
+    // Cria uma nova seção para o atributo
+    const section = document.createElement("div");
+    section.className = "section";
+    section.id = `container-${atributo.codigo}`;
+
+    // Adiciona título e informações básicas
+    section.innerHTML = `
+        <h2>${atributo.nomeApresentacao || "Atributo"} ${
+        atributo.obrigatorio ? '<span class="required"></span>' : ""
+    }</h2>
+        <p><strong>Forma de Preenchimento:</strong> ${
+            atributo.formaPreenchimento
+        }</p>
+    `;
+
+    let inputField;
+
+    // Configuração de campo com base na forma de preenchimento
+    switch (atributo.formaPreenchimento) {
+        case "TEXTO":
+            inputField = document.createElement("input");
+            inputField.type = "text";
+            inputField.maxLength = atributo.tamanhoMaximo || 255;
+            break;
+
+        case "NUMERO_INTEIRO":
+            inputField = document.createElement("input");
+            inputField.type = "number";
+            break;
+
+        case "NUMERO_REAL":
+            inputField = document.createElement("input");
+            inputField.type = "number";
+            inputField.step = `0.${"1".padStart(atributo.casasDecimais || 0, "0")}`;
+            break;
+
+        case "LISTA_ESTATICA":
+            inputField = document.createElement("select");
+            inputField.innerHTML = `<option value="">Selecione</option>`;
+            atributo.dominio?.forEach((option) => {
+                const opt = document.createElement("option");
+                opt.value = option.codigo;
+                opt.textContent = `${option.codigo} - ${option.descricao}`;
+                inputField.appendChild(opt);
+            });
+            break;
+
+        case "BOOLEANO":
+            inputField = document.createElement("select");
+            inputField.innerHTML = `
+                <option value="">Selecione</option>
+                <option value="true">Sim</option>
+                <option value="false">Não</option>
+            `;
+            break;
+
+        default:
+            console.warn(
+                `Forma de preenchimento desconhecida: ${atributo.formaPreenchimento}`
+            );
+            return;
+    }
+
+    // Configurações gerais do campo
+    if (inputField) {
+        inputField.name = atributo.codigo;
+        inputField.id = atributo.codigo;
+        inputField.setAttribute(
+            "data-required",
+            atributo.obrigatorio ? "true" : "false"
+        );
+
+        const inputWrapper = document.createElement("p");
+        const inputLabel = document.createElement("label");
+        inputLabel.textContent = atributo.nomeApresentacao || "Campo";
+        inputWrapper.appendChild(inputLabel);
+        inputWrapper.appendChild(inputField);
+
+        section.appendChild(inputWrapper);
+    }
+
+    container.appendChild(section);
+
+    // Adiciona evento de mudança para processar condicionados
+    if (inputField) {
+        inputField.addEventListener("change", () => {
+            limparCondicionadosRelacionados(atributo.codigo); // Remove apenas condicionados do atributo alterado
+            renderCondicionadosRecursivamente(atributo, inputField.value, section);
+        });
+    }
+}
+
+function renderCondicionadosRecursivamente(atributo, resposta, parentContainer) {
+    if (!resposta) return;
+
+    // Filtra condicionados relacionados à resposta
+    const condicionadosRelacionados = (atributo.condicionados || []).filter(
+        (cond) => validarCondicao(cond.condicao, resposta)
+    );
+
+    // Processa cada condicionado
+    condicionadosRelacionados.forEach((condicionado) => {
+        const novoContainer = document.createElement("div");
+        novoContainer.className = "nested";
+        novoContainer.id = `outros-${atributo.codigo}-${condicionado.atributo.codigo}`; // Identificador único
+
+        criarCampoAtributo(condicionado.atributo, novoContainer);
+        parentContainer.appendChild(novoContainer);
+
+        // Chamando recursivamente para processar condicionados do próximo nível
+        const inputField = document.getElementById(condicionado.atributo.codigo);
+        if (inputField) {
+            inputField.addEventListener("change", () => {
+                limparCondicionadosRelacionados(condicionado.atributo.codigo); // Limpa apenas os relacionados
+                renderCondicionadosRecursivamente(
+                    condicionado.atributo,
+                    inputField.value,
+                    novoContainer
+                );
+            });
+        }
+    });
+}
+
+function limparCondicionadosRelacionados(atributoCodigo) {
+    // Remove apenas os elementos relacionados ao atributo específico
+    const relatedFields = document.querySelectorAll(
+        `[id^="outros-${atributoCodigo}-"]`
+    );
+    relatedFields.forEach((field) => field.remove());
+}
+
+function validarCondicao(condicao, resposta) {
+    const operador = condicao.operador;
+    const valor = condicao.valor;
+    const composicao = condicao.composicao;
+    const subcondicao = condicao.condicao;
+
+    if (operador === "==" && resposta === valor) {
+        return composicao ? validarCondicao(subcondicao, resposta) : true;
+    }
+
+    if (composicao === "||") {
+        return (
+            validarCondicao(subcondicao, resposta) || resposta === valor
+        );
+    }
+
+    if (composicao === "&&") {
+        return (
+            validarCondicao(subcondicao, resposta) && resposta === valor
+        );
+    }
+
+    return false;
+}
+
+function atualizarCamposCondicionados(atributoCodigo, resposta) {
+    fetch("/validar_condicao_composta", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ atributoCodigo, resposta })
+    })
+        .then(response => response.json())
+        .then(condicionados => {
+            const container = document.getElementById(`container-${atributoCodigo}`);
+            if (!container) {
+                console.warn(`Contêiner não encontrado para o atributo ${atributoCodigo}`);
+                return;
+            }
+
+            const conditionedContainer = container.querySelector(".conditioned-container") || document.createElement("div");
+            conditionedContainer.className = "conditioned-container";
+            container.appendChild(conditionedContainer);
+
+            conditionedContainer.innerHTML = ""; // Limpa campos antigos
+            condicionados.forEach(condicionado => criarCampoAtributo(condicionado, conditionedContainer));
+        })
+        .catch(error => console.error("Erro ao atualizar condicionados:", error));
+}
+
+function salvarRespostas() {
+    const respostas = [];
+    document.querySelectorAll("#atributos-container input, #atributos-container select").forEach(input => {
+        respostas.push({ name: input.name, value: input.value });
+    });
+
+    const data = {
+        ncm: document.getElementById("ncm").value,
+        pn: document.getElementById("pn").value,
+        fornecedor: document.getElementById("codigo-fornecedor").value,
+        nomeFornecedor: document.getElementById("nome-fornecedor").value,
+        paisFornecedor: document.getElementById("pais-fornecedor").value,
+        codigoFornecedorDuimp: document.getElementById("codigo-fornecedor-duimp").value,
+        denominacao: document.getElementById("denominacao").value.trim(),
+        oqueE: document.getElementById("oque-e").value.trim(),
+        funcao: document.getElementById("funcao").value.trim(),
+        aplicacao: document.getElementById("aplicacao").value.trim(),
+        materialConstitutivo: document.getElementById("material-constitutivo").value.trim(),
+        marca: document.getElementById("marca").value.trim(),
+        modelo: document.getElementById("modelo").value.trim(),
+        respostas
+    };
+
+    // Log para verificar o que está sendo enviado
+    console.log("Dados enviados ao backend:", data);
+
+    fetch("/salvar_respostas", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+    })
+        .then(response => response.json())
+        .then(result => {
+            console.log("Resposta do servidor:", result);
+            alert(result.message || "Salvo com sucesso!");
+        })
+        .catch(error => alert(`Erro ao salvar: ${error}`));
+}
+
+
+function configurarValidacaoNumeroReal(inputField, casasDecimais) {
+    inputField.addEventListener("input", (e) => {
+        const regex = new RegExp(`^\\d*[\\.,]?\\d{0,${casasDecimais || 0}}$`);
+        const value = e.target.value;
+        if (!regex.test(value)) {
+            e.target.value = value.slice(0, -1);
+        }
+    });
+
+    inputField.addEventListener("blur", (e) => {
+        let value = e.target.value.replace(",", ".");
+        if (casasDecimais && value.includes(".")) {
+            const [integerPart, decimalPart] = value.split(".");
+            e.target.value = `${integerPart}.${decimalPart.slice(0, casasDecimais)}`;
+        }
+    });
+}
+
+function configurarValidacaoNumeroInteiro(inputField) {
+    inputField.addEventListener("input", (e) => {
+        e.target.value = e.target.value.replace(/[^0-9]/g, "");
+    });
+}
+
+
+function exibirModal(titulo, mensagens) {
+    const modal = document.getElementById('modal');
+    const modalContent = document.getElementById('modal-content');
+
+    if (!modal || !modalContent) {
+        console.error("O modal ou modal-content não foi encontrado no DOM.");
+        return;
+    }
+
+    modalContent.innerHTML = `
+        <h2>${titulo}</h2>
+        <ul>
+            ${mensagens.map(msg => `<li>${msg}</li>`).join('')}
+        </ul>
+        <button onclick="fecharModal()">Fechar</button>
+    `;
+
+    modal.style.display = 'block';
+}
+
+
+// Função para fechar o modal
+function fecharModal() {
+    const modal = document.getElementById('modal');
+    modal.style.display = 'none';
+}
+
+    document.addEventListener("DOMContentLoaded", function () {
+        const ncmInput = document.getElementById("ncm");
+
+        if (ncmInput) {
+            ncmInput.addEventListener("input", (e) => {
+                // Remove caracteres não numéricos
+                let value = e.target.value.replace(/[^0-9]/g, "");
+
+                // Limita o número de dígitos a 8
+                if (value.length > 8) {
+                    value = value.slice(0, 8);
+                }
+
+                e.target.value = value;
+            });
+
+            ncmInput.addEventListener("paste", (e) => {
+                e.preventDefault();
+
+                // Obtém o texto colado
+                const paste = (e.clipboardData || window.clipboardData).getData("text");
+
+                // Remove caracteres não numéricos
+                let value = paste.replace(/[^0-9]/g, "");
+
+                // Limita o número de dígitos a 8
+                if (value.length > 8) {
+                    value = value.slice(0, 8);
+                }
+
+                // Define o valor do campo
+                e.target.value = value;
+            });
+        } else {
+            console.error("Elemento NCM não encontrado no DOM.");
+        }
+    });
+
+
+
+
+
+function limparPN() {
+    const pnInput = document.getElementById("pn");
+    pnInput.value = ""; // Limpa o conteúdo do campo
+    pnInput.focus();    // Foca no campo novamente
+
+    document.getElementById('ncm').value = '';
+    document.getElementById('codigo-fornecedor').value = '';
+    document.getElementById('pais-fornecedor').value ='';
+    document.getElementById('nome-fornecedor').value = '';
+    document.getElementById('codigo-fornecedor-duimp').value = '';
+    document.getElementById('descricao').value = '';
+}
+
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        // Manipulação de abas
+        const tabs = document.querySelectorAll(".tab");
+        const contents = document.querySelectorAll(".tab-content");
+
+        tabs.forEach(tab => {
+            tab.addEventListener("click", () => {
+                tabs.forEach(t => t.classList.remove("active"));
+                contents.forEach(c => c.classList.remove("active"));
+
+                tab.classList.add("active");
+                document.querySelector(tab.dataset.target).classList.add("active");
+            });
+        });
+
+        // Lógica de upload de arquivos
+        const fileInput = document.getElementById("file-upload");
+        const tableBody = document.getElementById("uploaded-files-table").querySelector("tbody");
+
+        fileInput.addEventListener("change", () => {
+            const files = fileInput.files;
+            tableBody.innerHTML = ""; // Limpa a tabela antes de preencher com novos arquivos
+
+            Array.from(files).forEach(file => {
+                const row = document.createElement("tr");
+
+                const nameCell = document.createElement("td");
+                nameCell.textContent = file.name;
+
+                const actionCell = document.createElement("td");
+                const deleteButton = document.createElement("button");
+                deleteButton.textContent = "Remover";
+                deleteButton.addEventListener("click", () => row.remove());
+                actionCell.appendChild(deleteButton);
+
+                row.appendChild(nameCell);
+                row.appendChild(actionCell);
+                tableBody.appendChild(row);
+            });
+        });
+    });
+</script>
+<body>
+    <h1>Formulário de Atributos da NCM</h1>
+    <div class="container">
+        <div class="section">
+            <h2>Informações do Item</h2>
+            <div class="input-container">
+                <input type="text" id="pn" placeholder="Digite o PN" list="pn-options" onchange="atualizarCamposPN()">
+                <span class="clear-btn" onclick="limparPN()" >×</span>
+                <datalist id="pn-options"></datalist>
+            </div>
+            <label for="ncm"></label>
+            <input type="text" id="ncm" placeholder="Digite o código da NCM" maxlength="8" onclick="limparPN()">
+            <label for="codigo-fornecedor"></label>
+            <input type="text" id="codigo-fornecedor" placeholder="Código Fornecedor">
+            <label for="codigo-fornecedor-duimp"></label>
+            <input type="text" id="codigo-fornecedor-duimp" placeholder="Código Fornecedor DUIMP">
+            <label for="pais-fornecedor"></label>
+            <input type="text" id="pais-fornecedor" placeholder="País Fornecedor">
+            <label for="nome-fornecedor"></label>
+            <input type="text" id="nome-fornecedor" placeholder="Nome Fornecedor">
+            <label for="descricao"></label>
+            <textarea id="descricao" rows="2" cols="80" maxlength="3700" placeholder="Descrição Detalhada"></textarea>
+            <button type="button" onclick="buscarNCM()">Buscar NCM</button>
+        </div>
+        <div class="section">
+            <h2>Dados Básicos do Item</h2>
+            <label for="denominacao"></label>
+            <input type="text" id="denominacao" maxlength="100" placeholder="Denominação do Produto:">
+            <label for="oque-e"></label>
+            <input type="text" id="oque-e" placeholder="O que é?">
+            <label for="funcao"></label>
+            <input type="text" id="funcao" placeholder="Função">
+            <label for="aplicacao"></label>
+            <input type="text" id="aplicacao" placeholder="Aplicação">
+            <label for="material-constitutivo"></label>
+            <input type="text" id="material-constitutivo" placeholder="Material Constitutivo">
+            <label for="marca"></label>
+            <input type="text" id="marca" placeholder="Marca">
+            <label for="modelo"></label>
+            <input type="text" id="modelo" placeholder="Modelo">
+        </div>
+    </div>
+    
+   <div id="tabs-container">
+    <ul class="tabs">
+        <li class="tab active" data-target="#descricao-produto">Descrição Produto</li>
+        <li class="tab" data-target="#anexos">Anexos</li>
+    </ul>
+    
+    <div id="descricao-produto" class="tab-content active">
+        <div id="atributos-container" class="section">
+            <h2>Atributos Condicionados</h2>
+            <!-- Os atributos serão carregados dinamicamente aqui -->
+        </div>
+    </div>
+    
+    <div id="anexos" class="tab-content">
+        <div id="anexos-container" class="section">
+            <h2>Upload de Arquivos</h2>
+            <input type="file" id="file-upload" multiple>
+            <table id="uploaded-files-table">
+                <thead>
+                    <tr>
+                        <th>Nome do Arquivo</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Os arquivos enviados serão listados aqui -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+    <button id="save-button" type="button" onclick="salvarRespostas()">Salvar Respostas</button>
+
+    <div id="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5);">
+        <div id="modal-content" style="background: white; padding: 20px; margin: 10% auto; width: 50%; border-radius: 5px;">
+            <!-- Conteúdo do modal será preenchido dinamicamente -->
+        </div>
+    </div>
+</div>
+
+
+</body>
+</html>
